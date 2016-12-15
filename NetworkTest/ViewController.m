@@ -26,15 +26,21 @@
     [super viewDidLoad];
     
     UIButton *btn = [[UIButton alloc]initWithFrame:CGRectMake(100, 100, 200, 100)];
-    [btn setTitle:@"AFNetworking" forState:UIControlStateNormal];
+    [btn setTitle:@"AFNetworking 请求数据" forState:UIControlStateNormal];
     [btn setBackgroundColor:[UIColor redColor]];
     [btn addTarget:self action:@selector(btnClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
     
     UIButton *btn1 = [[UIButton alloc]initWithFrame:CGRectMake(100, 300, 200, 100)];
-    [btn1 setTitle:@"webview" forState:UIControlStateNormal];
+    [btn1 setTitle:@"webview 加载网页" forState:UIControlStateNormal];
     [btn1 setBackgroundColor:[UIColor redColor]];
     [btn1 addTarget:self action:@selector(webClick) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn1];
+    
+    UIButton *btn2 = [[UIButton alloc]initWithFrame:CGRectMake(100, 500, 200, 100)];
+    [btn2 setTitle:@"AFNetworking 下载网络文件" forState:UIControlStateNormal];
+    [btn2 setBackgroundColor:[UIColor redColor]];
+    [btn2 addTarget:self action:@selector(downLoadFile) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn1];
     
 }
@@ -61,6 +67,19 @@
     _originRequest = [NSURLRequest requestWithURL:[NSURL  URLWithString:@"https://www.miracleqiji.com:443/miracle/register_explain.jsp"]];
     _urlConnection= [[NSURLConnection alloc]initWithRequest:_originRequest delegate:self];
     [_urlConnection start];
+}
+
+- (void)downLoadFile {
+    NSString *docDirPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *filePath1 = [NSString stringWithFormat:@"%@/183257526952875028640715027.mp3", docDirPath];
+    HttpManager *httpsReq = [HttpManager shareHttpManager];
+    [httpsReq downloadFileWithURL:@"https://www.miracleqiji.com:443/miracle/haveaudio.action" parameters:@{@"filename":@"183257526952875028640715027.mp3"} savedPath:filePath1 downloadSuccess:^(NSURLResponse *response, NSURL *filePath) {
+        NSLog(@"successful %@",filePath);
+    } downloadFailure:^(NSError *error) {
+        NSLog(@"failure %@",error);
+    } downloadProgress:^(NSProgress *downloadProgress) {
+        NSLog(@"总大小：%lld,当前大小:%lld",downloadProgress.totalUnitCount,downloadProgress.completedUnitCount);
+    }];
 }
 - (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType
 
